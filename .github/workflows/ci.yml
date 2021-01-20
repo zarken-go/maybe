@@ -19,7 +19,13 @@ jobs:
         go-version: 1.15
 
     - name: Test
-      run: go test -v ./...
+      run: go test -v -p 1 -timeout 10m ./... -coverprofile=coverage.txt -covermode=atomic
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        file: ./coverage.txt
+        fail_ci_if_error: false
 
   golangci-lint:
     name: golangci-lint
