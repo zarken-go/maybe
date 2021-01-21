@@ -33,27 +33,12 @@ func (Suite *MaybeInt64Suite) TestMarshalJSON() {
 
 func (Suite *MaybeInt64Suite) TestUnmarshalJSON() {
 	Suite.AssertUnmarshalJSON([]byte(`12345`), 12345, true, nil)
-}
-
-func (Suite *MaybeInt64Suite) TestUnmarshalJSONNull() {
 	Suite.AssertUnmarshalJSON(nullBytes, 0, false, nil)
-}
-
-func (Suite *MaybeInt64Suite) TestUnmarshalJSONUnsafe() {
 	Suite.AssertUnmarshalJSON([]byte(`12345.11`), 0, false,
 		errors.New(`unsafe float64 to int64 cast: 12345.110000`))
-}
-
-func (Suite *MaybeInt64Suite) TestUnmarshalJSONArrayErr() {
 	Suite.AssertUnmarshalJSON([]byte(`[]`), 0, false,
 		errors.New(`unsupported cast from []interface {} to int64`))
-}
-
-func (Suite *MaybeInt64Suite) TestUnmarshalString() {
 	Suite.AssertUnmarshalJSON([]byte(`"12345"`), 12345, true, nil)
-}
-
-func (Suite *MaybeInt64Suite) TestUnmarshalStringErr() {
 	Suite.AssertUnmarshalJSON([]byte(`"not_int"`), 0, false,
 		errors.New(`strconv.ParseInt: parsing "not_int": invalid syntax`))
 }
