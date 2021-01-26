@@ -3,8 +3,9 @@ package maybe
 import (
 	"encoding/json"
 	"errors"
-	"github.com/stretchr/testify/suite"
 	"testing"
+
+	"github.com/stretchr/testify/suite"
 )
 
 type MaybeStringSuite struct {
@@ -20,12 +21,12 @@ func (Suite *MaybeStringSuite) TestSet() {
 }
 
 func (Suite *MaybeStringSuite) TestMarshalJSON() {
-	Suite.AssertMarshalJson(MaybeString{}, nullBytes, nil)
-	Suite.AssertMarshalJson(MaybeString{
+	Suite.AssertMarshalJSON(MaybeString{}, nullBytes, nil)
+	Suite.AssertMarshalJSON(MaybeString{
 		ValidFlag: false,
 		String:    `str`,
 	}, nullBytes, nil)
-	Suite.AssertMarshalJson(MaybeString{
+	Suite.AssertMarshalJSON(MaybeString{
 		ValidFlag: true,
 		String:    `str`,
 	}, []byte(`"str"`), nil)

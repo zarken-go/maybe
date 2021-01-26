@@ -7,7 +7,7 @@ import (
 	"reflect"
 )
 
-type MaybeString struct {
+type MaybeString struct { //nolint:golint
 	ValidFlag
 	String string
 }

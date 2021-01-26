@@ -1,6 +1,7 @@
 package maybe
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"math"
@@ -8,7 +9,7 @@ import (
 	"strconv"
 )
 
-type MaybeInt64 struct {
+type MaybeInt64 struct { //nolint:golint
 	ValidFlag
 	Int64 int64
 }
@@ -33,11 +34,28 @@ func (m *MaybeInt64) Set(v int64) {
 }
 
 func (m *MaybeInt64) UnmarshalJSON(b []byte) error {
-	var v interface{}
+	if bytes.Equal(b, nullBytes) {
+		m.Int64 = 0
+		m.ValidFlag = false
+		return nil
+	}
+
+	var v int64
 	if err := json.Unmarshal(b, &v); err != nil {
+		var s string
+		if json.Unmarshal(b, &s) == nil {
+			return m.SetE(s)
+		}
+
+		var f float64
+		if json.Unmarshal(b, &f) == nil {
+			return m.SetE(f)
+		}
+
 		return err
 	}
-	return m.SetE(v)
+	m.Set(v)
+	return nil
 }
 
 func (m *MaybeInt64) SetE(v interface{}) error {
@@ -53,9 +71,10 @@ func (m *MaybeInt64) SetE(v interface{}) error {
 		m.Int64 = val
 		return nil
 	case float64:
-		// TODO: Test +INF, -INF, NaN
-		// verify lossless conversion
-		if val == math.Trunc(val) {
+		if val == math.Trunc(val) &&
+			!math.IsInf(val, -1) &&
+			!math.IsInf(val, 1) &&
+			!math.IsNaN(val) {
 			m.ValidFlag = true
 			m.Int64 = int64(val)
 			return nil
